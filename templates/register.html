@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MindScroll — Daftar</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+  </head>
+  <body>
+    <canvas id="bgCanvas"></canvas>
+
+    <div class="auth-wrap">
+      <div class="auth-card">
+        <div class="auth-logo">
+          <span class="logo-icon">📱</span>
+          <span class="logo-text">MindScroll</span>
+        </div>
+        <h1 class="auth-title">Daftar Akun</h1>
+        <p class="auth-sub">
+          Buat akun untuk menyimpan riwayat hasil klasifikasi kamu.
+        </p>
+
+        {% if error %}
+        <div class="alert-error"><span>⚠️</span> {{ error }}</div>
+        {% endif %}
+
+        <form method="POST" class="auth-form">
+          <label class="auth-label">Username</label>
+          <input
+            type="text"
+            name="username"
+            class="auth-input"
+            placeholder="Pilih username"
+            required
+            autofocus
+          />
+
+          <label class="auth-label">Password</label>
+          <div class="input-wrap">
+            <input
+              type="password"
+              name="password"
+              id="password"
+              class="auth-input"
+              placeholder="Minimal 6 karakter"
+              required
+            />
+            <span class="toggle-pw" onclick="togglePw('password')">👁️</span>
+          </div>
+
+          <label class="auth-label">Konfirmasi Password</label>
+          <div class="input-wrap">
+            <input
+              type="password"
+              name="confirm_password"
+              id="confirm_password"
+              class="auth-input"
+              placeholder="Ulangi password"
+              required
+            />
+            <span class="toggle-pw" onclick="togglePw('confirm_password')"
+              >👁️</span
+            >
+          </div>
+
+          <button type="submit" class="cta-btn auth-btn">Daftar</button>
+        </form>
+
+        <p class="auth-footer">
+          Sudah punya akun? <a href="{{ url_for('login') }}">Masuk di sini</a>
+        </p>
+      </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script>
+      function togglePw(id) {
+        const inp = document.getElementById(id);
+        inp.type = inp.type === "password" ? "text" : "password";
+      }
+    </script>
+  </body>
+</html>
