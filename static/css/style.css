@@ -1002,12 +1002,10 @@ body {
 
 /* Responsive: hide left panel on small screens */
 @media (max-width: 480px) {
-  .auth-left {
-    display: none;
-  }
-  .auth-right {
-    width: 100%;
-  }
+    .auth-split { flex-direction: column; }
+    .auth-left { padding: 2rem 1.5rem; }
+    .auth-left-title { font-size: 1.8rem; }
+    .auth-right { width: 100%; }
 }
 
 /* ═══════════════════════════════
