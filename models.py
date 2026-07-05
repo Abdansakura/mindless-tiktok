@@ -12,8 +12,7 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(50), unique=True, nullable=False)
     password_hash = db.Column(db.String(255), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    is_admin = db.Column(db.Boolean, default=False)
-
+   
     # Relasi ke riwayat hasil klasifikasi milik user ini
     hasil_list = db.relationship('HasilKlasifikasi', backref='user', lazy=True,
                                   cascade='all, delete-orphan')
