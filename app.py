@@ -70,15 +70,15 @@ LIKERT_OPTIONS = [
 
 LABEL_INFO = {
     "Rendah": {
-        "yor": "green",
+        "color": "green",
         "desc": "Penggunaan TikTok kamu masih terkendali. Kamu sadar dan mampu membatasi diri dengan baik. Pertahankan kebiasaan digital yang sehat ini!"
     },
     "Sedang": {
-        "yor": "yellow",
+        "color": "yellow",
         "desc": "Ada tanda-tanda kamu mulai kehilangan kendali saat menggunakan TikTok. Perlu sedikit lebih waspada dan mulai atur waktu penggunaan."
     },
     "Tinggi": {
-        "yor": "red",
+        "color": "red",
         "desc": "Kamu menunjukkan tingkat mindless scrolling yang tinggi. Disarankan untuk mengatur ulang kebiasaan penggunaan TikTok secara lebih serius."
     },
 }
