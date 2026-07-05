@@ -232,7 +232,7 @@ def predict():
 
         return render_template('result.html',
                                label=prediction,
-                               yor=info['yor'],
+                               color=info['color'],
                                desc=info['desc'],
                                answers=answers,
                                answers_display=answers_display,
