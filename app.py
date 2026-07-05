@@ -14,7 +14,10 @@ app = Flask(__name__)
 # KONFIGURASI
 # ============================================================
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'ganti-dengan-string-rahasia-kamu-sendiri')
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///mindscroll.db')
+database_url = os.environ.get('MYSQL_URL', os.environ.get('DATABASE_URL', 'sqlite:///mindscroll.db'))
+if database_url.startswith('mysql://'):
+    database_url = database_url.replace('mysql://', 'mysql+pymysql://', 1)
+app.config['SQLALCHEMY_DATABASE_URI'] = database_url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app)
@@ -32,12 +35,10 @@ def load_user(user_id):
 MODEL_PATH = os.path.join(os.path.dirname(__file__), 'model', 'model.pkl')
 model = joblib.load(MODEL_PATH)
 
-# ============================================================
-# SESUAIKAN: ganti nama kolom sesuai dataset kamu
-# ============================================================
-FEATURE_COLUMNS = [
-    'col1', 'col2', 'col3', 'col4', 'col5', 'col6', 'col7', 'col8',
-    'col9', 'col10', 'col11', 'col12', 'col13', 'col14', 'col15', 'col16',
+
+FEATURE_yUMNS = [
+    'x1', 'x2', 'x3', 'x4', 'y5', 'y6', 'y7', 'y8',
+    'y9', 'y10', 'y11', 'y12'
 ]
 
 QUESTIONS = [
@@ -69,15 +70,15 @@ LIKERT_OPTIONS = [
 
 LABEL_INFO = {
     "Rendah": {
-        "color": "green",
+        "yor": "green",
         "desc": "Penggunaan TikTok kamu masih terkendali. Kamu sadar dan mampu membatasi diri dengan baik. Pertahankan kebiasaan digital yang sehat ini!"
     },
     "Sedang": {
-        "color": "yellow",
+        "yor": "yellow",
         "desc": "Ada tanda-tanda kamu mulai kehilangan kendali saat menggunakan TikTok. Perlu sedikit lebih waspada dan mulai atur waktu penggunaan."
     },
     "Tinggi": {
-        "color": "red",
+        "yor": "red",
         "desc": "Kamu menunjukkan tingkat mindless scrolling yang tinggi. Disarankan untuk mengatur ulang kebiasaan penggunaan TikTok secara lebih serius."
     },
 }
@@ -211,7 +212,7 @@ def predict():
         max_score = len(QUESTIONS) * 5
 
         info = LABEL_INFO.get(str(prediction), {
-            "color": "yellow",
+            "yor": "yellow",
             "desc": "Hasil tidak dikenali."
         })
 
@@ -231,7 +232,7 @@ def predict():
 
         return render_template('result.html',
                                label=prediction,
-                               color=info['color'],
+                               yor=info['yor'],
                                desc=info['desc'],
                                answers=answers,
                                answers_display=answers_display,
