@@ -1,9 +1,10 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, make_response
 from flask_login import (LoginManager, login_user, login_required,
                           logout_user, current_user)
 import joblib
 import numpy as np
 import os
+from datetime import timezone, timedelta
 
 from models import db, User, HasilKlasifikasi
 
@@ -111,11 +112,6 @@ def register():
             return render_template('register.html', error="Username dan password wajib diisi.")
         if len(password) < 6:
             return render_template('register.html', error="Password minimal 6 karakter.")
-        if len(username) < 6:
-            return render_template('register.html', error="Username minimal 4 karakter.")
-        import re
-        if not re.search(r'[A-Za-z]', password) or not re.search(r'[0-9]', password):
-            return render_template('register.html', error="Password harus mengandung huruf dan angka.")
         if password != confirm:
             return render_template('register.html', error="Konfirmasi password tidak cocok.")
         if User.query.filter_by(username=username).first():
@@ -162,6 +158,15 @@ def logout():
 # ============================================================
 # MAIN ROUTES
 # ============================================================
+
+WIB = timezone(timedelta(hours=7))
+
+@app.template_filter('wib')
+def to_wib(dt):
+    if dt is None:
+        return '-'
+    return dt.replace(tzinfo=timezone.utc).astimezone(WIB).strftime('%d %b %Y, %H:%M') + ' WIB'
+
 @app.route('/')
 @login_required
 def index():
@@ -257,6 +262,40 @@ def riwayat():
 
 with app.app_context():
     db.create_all()  # otomatis buat file/tabel database jika belum ada
+
+
+@app.route('/export')
+@login_required
+def export():
+    if not current_user.is_admin:
+        return redirect(url_for('index'))
+
+    from models import User
+    import csv, io
+    from datetime import timezone, timedelta
+    WIB = timezone(timedelta(hours=7))
+
+    data = HasilKlasifikasi.query.order_by(HasilKlasifikasi.created_at.desc()).all()
+
+    output = io.StringIO()
+    writer = csv.writer(output)
+    writer.writerow(['No', 'Username', 'Label', 'Total Skor', 'Menit Asli',
+                     'f1','f2','f3','f4','f5','f6','f7','f8',
+                     'f9','f10','f11','f12','f13','f14','f15','f16',
+                     'Waktu (WIB)'])
+    for i, d in enumerate(data, 1):
+        user = User.query.get(d.user_id)
+        username = user.username if user else 'unknown'
+        waktu = d.created_at.replace(tzinfo=timezone.utc).astimezone(WIB).strftime('%d/%m/%Y %H:%M') if d.created_at else '-'
+        writer.writerow([i, username, d.label, d.total_skor, d.menit_asli or '-',
+                         d.f1,d.f2,d.f3,d.f4,d.f5,d.f6,d.f7,d.f8,
+                         d.f9,d.f10,d.f11,d.f12,d.f13,d.f14,d.f15,d.f16,
+                         waktu])
+
+    response = make_response(output.getvalue())
+    response.headers['Content-Disposition'] = 'attachment; filename=data_mindscroll.csv'
+    response.headers['Content-Type'] = 'text/csv; charset=utf-8'
+    return response
 
 if __name__ == '__main__':
     app.run(debug=True)
