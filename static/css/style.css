@@ -1001,7 +1001,7 @@ body {
 }
 
 /* Responsive: hide left panel on small screens */
-@media (max-width: 768px) {
+@media (max-width: 480px) {
   .auth-left {
     display: none;
   }
